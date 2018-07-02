@@ -1,0 +1,47 @@
+<Project>
+
+  <ItemDefinitionGroup>
+    <Dependency>
+      <PreventUpgrade>true</PreventUpgrade>
+    </Dependency>
+  </ItemDefinitionGroup>
+
+  <PropertyGroup>
+    <_RepoTaskAssembly>$(RepositoryRoot)build\tasks\bin\publish\RepoTasks.dll</_RepoTaskAssembly>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <PlatformManifestTargetFileName>$(PackageId).PlatformManifest.txt</PlatformManifestTargetFileName>
+    <PlatformManifestTargetPath>$(TargetDir)$(PlatformManifestTargetFileName)</PlatformManifestTargetPath>
+  </PropertyGroup>
+
+  <UsingTask TaskName="RepoTasks.GeneratePlatformManifest" AssemblyFile="$(_RepoTaskAssembly)" />
+
+  <ItemGroup>
+    <Content Include="$(PlatformManifestTargetPath)" PackagePath="build\$(TargetFramework)\$(PlatformManifestTargetFileName)" />
+  </ItemGroup>
+
+  <Target Name="GeneratePlatformManifest"
+    DependsOnTargets="RunResolvePublishAssemblies"
+    BeforeTargets="Build"
+    Inputs="@(ResolvedAssembliesToPublish);$(MSBuildAllProjects)"
+    Outputs="$(PlatformManifestTargetPath)">
+
+    <ItemGroup>
+      <!--
+      Filter out:
+        * AssetType == native (e.g. sni.dll)
+        * AssetType == resource (e.g. .fr_FR.dll files)
+        * DestinationSubPath != '' - (e.g. runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll)
+      -->
+      <AssemblyInManifest Include="@(ResolvedAssembliesToPublish)" Condition="'%(ResolvedAssembliesToPublish.Identity)' != '' AND '%(ResolvedAssembliesToPublish.AssetType)' == 'runtime' " />
+      <AssemblyInManifest Remove="@(AssemblyInManifest)" Condition=" $([System.String]::new('%(DestinationSubPath)').StartsWith('runtimes')) " />
+    </ItemGroup>
+
+    <Error Condition="@(AssemblyInManifest->Count()) == 0"
+      Text="Could not resolve assemblies to include in the platform manifest" />
+
+    <RepoTasks.GeneratePlatformManifest
+      Assemblies="@(AssemblyInManifest)"
+      Dependencies="@(Dependency)"
+      OutputPath="$(PlatformManifestTargetPath)" />
+  </Target>
+</Project>

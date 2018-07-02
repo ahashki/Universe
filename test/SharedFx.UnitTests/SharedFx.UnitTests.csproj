@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="Microsoft.AspNetCore.TestData">
+      <_Parameter1>AppPlatformManifestFilePath</_Parameter1>
+      <_Parameter2>$(AppPlatformManifestFilePath)</_Parameter2>
+    </AssemblyAttribute>
     <AssemblyAttribute Include="Microsoft.AspNetCore.TestData">
       <_Parameter1>PackageVersion</_Parameter1>
       <_Parameter2>$(PackageVersion)</_Parameter2>
@@ -26,6 +30,10 @@
       <_Parameter1>MicrosoftNETCoreAppPackageVersion</_Parameter1>
       <_Parameter2>$(MicrosoftNETCoreAppPackageVersion)</_Parameter2>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\build\tasks\Metadata\AssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>

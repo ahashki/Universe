@@ -7,6 +7,7 @@ using Xunit;
 
 namespace Microsoft.AspNetCore
 {
+    [Trait("Category", "SharedFramework")]
     public class SharedFxTests
     {
         [Theory]

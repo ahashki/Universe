@@ -12,6 +12,8 @@ namespace Microsoft.AspNetCore
 
         public static string GetMicrosoftNETCoreAppPackageVersion() => GetTestDataValue("MicrosoftNETCoreAppPackageVersion");
 
+        internal static string GetAppPlatformManifestFilePath() => GetTestDataValue("AppPlatformManifestFilePath");
+
         public static string GetDotNetRoot() => GetTestDataValue("DotNetRoot");
 
         public static string GetRepositoryCommit() => GetTestDataValue("RepositoryCommit");

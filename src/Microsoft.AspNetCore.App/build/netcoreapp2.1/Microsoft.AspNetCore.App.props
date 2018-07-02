@@ -12,6 +12,13 @@
   </PropertyGroup>
 
   <!--
+    The file path to the platform manifest file. This should only be overriden when
+  -->
+  <PropertyGroup>
+    <_AspNetCoreAppPlatformManifestFilePath>$(MSBuildThisFileDirectory)Microsoft.AspNetCore.App.PlatformManifest.txt</_AspNetCoreAppPlatformManifestFilePath>
+  </PropertyGroup>
+
+  <!--
     Capability that enables Visual Studio support for hosting Asp.Net Core applications in the IIS process
   -->
   <ItemGroup>

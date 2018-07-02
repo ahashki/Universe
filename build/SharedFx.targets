@@ -65,6 +65,7 @@
     <!-- Move to working dir -->
     <Copy SourceFiles="@(MetapackageFiles)" DestinationFolder="$(MetapackageWorkDirectory)%(RecursiveDir)" />
     <Copy SourceFiles="$(_MetapackageSrcRoot)Directory.Build.props" DestinationFolder="$(_WorkRoot)" />
+    <Copy SourceFiles="$(_MetapackageSrcRoot)PlatformManifest.targets" DestinationFolder="$(_WorkRoot)" />
 
     <!-- Add references to project -->
     <RepoTasks.AddMetapackageReferences
@@ -81,7 +82,9 @@
     <MSBuild Projects="$(MetapackageWorkDirectory)$(MetapackageName).csproj" Targets="Pack" Properties="$(CommonProps);PackageOutputPath=$(BuildDir)" />
   </Target>
 
-  <Target Name="BuildMetapackages">
+  <Target Name="BuildMetapackages" DependsOnTargets="_CoreBuildMetapackages;TestMetapackage" />
+
+  <Target Name="_CoreBuildMetapackages">
     <ItemGroup>
       <_MetapackageBuilderProject Include="$(MSBuildProjectFullPath)">
         <AdditionalProperties>
@@ -530,19 +533,28 @@
 
   <Target Name="BuildSharedFx" DependsOnTargets="GeneratePropsFiles;ResolveSharedFxFiles;CrossGenAssemblies;CrossGenSymbols;PackSharedFx;TestSharedFx"/>
 
-  <Target Name="TestSharedFx" DependsOnTargets="DefineSharedFxPrerequisites;ResolveCommitHash">
+  <Target Name="_GetSharedFxTestProps" DependsOnTargets="DefineSharedFxPrerequisites;ResolveCommitHash">
     <PropertyGroup>
       <UnitTestFxProject>$(RepositoryRoot)\test\SharedFx.UnitTests\SharedFx.UnitTests.csproj</UnitTestFxProject>
       <UnitTestFxTestProps>
         DotNetRestoreSourcePropsPath=$(GeneratedRestoreSourcesPropsPath);
         DotNetPackageVersionPropsPath=$(GeneratedPackageVersionPropsPath);
         SharedFxOutputPath=$(SharedFxIntermediateOutputPath);
+        AppPlatformManifestFilePath=$(_WorkRoot)Microsoft.AspNetCore.App\bin\$(Configuration)\netcoreapp2.1\Microsoft.AspNetCore.App.PlatformManifest.txt;
         RepositoryCommit=$(RepositoryCommit);
         SharedFxRuntimeIdentifier=$(SharedFXRid)
       </UnitTestFxTestProps>
     </PropertyGroup>
+  </Target>
+
+  <Target Name="TestSharedFx" DependsOnTargets="_GetSharedFxTestProps">
     <MSBuild Projects="$(UnitTestFxProject)" Targets="Restore" Properties="_Dummy=restore;$(UnitTestFxTestProps)" />
     <MSBuild Projects="$(UnitTestFxProject)" Targets="VSTest" Properties="$(UnitTestFxTestProps)" />
+  </Target>
+
+  <Target Name="TestMetapackage" DependsOnTargets="_GetSharedFxTestProps">
+    <MSBuild Projects="$(UnitTestFxProject)" Targets="Restore" Properties="_Dummy=restore;$(UnitTestFxTestProps)" />
+    <MSBuild Projects="$(UnitTestFxProject)" Targets="VSTest" Properties="$(UnitTestFxTestProps);VSTestTestCaseFilter=Category=Metapackage" />
   </Target>
 
 </Project>

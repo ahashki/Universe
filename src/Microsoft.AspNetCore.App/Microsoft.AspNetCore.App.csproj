@@ -1,4 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -15,4 +16,41 @@
     <Content Include="lib\$(TargetFramework)\_._" PackagePath="%(Identity)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Dependency Include="Microsoft.DotNet.PlatformAbstractions" />
+    <Dependency Include="System.Data.SqlClient" />
+    <Dependency Include="System.IO.Pipelines" />
+    <Dependency Include="System.Net.WebSockets.WebSocketProtocol" />
+    <Dependency Include="System.Runtime.CompilerServices.Unsafe" />
+    <Dependency Include="System.Security.Cryptography.Pkcs" />
+    <Dependency Include="System.Security.Cryptography.Xml" />
+    <Dependency Include="System.Security.Permissions" />
+    <Dependency Include="System.Text.Encoding.CodePages" />
+    <Dependency Include="System.Text.Encodings.Web" />
+    <Dependency Include="System.Threading.Channels" />
+    <!--
+      These packages are marked as PreventUpgrade = false because these binaries ship on a cycle independent from this shared framework.
+      If users upgrade their package version to one of this higher than what Microsoft.AspNetCore.App is using, it should cause the publish
+      trimming and deps genreation to prefer the package version, not the shared framework.
+    -->
+    <Dependency Include="Microsoft.AspNet.WebApi.Client" PreventUpgrade="false" />
+    <Dependency Include="Microsoft.IdentityModel.Logging" PreventUpgrade="false" />
+    <Dependency Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" PreventUpgrade="false" />
+    <Dependency Include="Microsoft.IdentityModel.Protocols.WsFederation" PreventUpgrade="false" />
+    <Dependency Include="Microsoft.IdentityModel.Protocols" PreventUpgrade="false" />
+    <Dependency Include="Microsoft.IdentityModel.Tokens.Saml" PreventUpgrade="false" />
+    <Dependency Include="Microsoft.IdentityModel.Tokens" PreventUpgrade="false" />
+    <Dependency Include="Microsoft.IdentityModel.Xml" PreventUpgrade="false" />
+    <Dependency Include="Newtonsoft.Json.Bson" PreventUpgrade="false" />
+    <Dependency Include="Newtonsoft.Json" PreventUpgrade="false" />
+    <Dependency Include="Remotion.Linq" PreventUpgrade="false" />
+    <Dependency Include="System.IdentityModel.Tokens.Jwt" PreventUpgrade="false" />
+    <Dependency Include="System.Interactive.Async" PreventUpgrade="false" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="..\PlatformManifest.targets" />
+
+  <Target Name="Compile" />
+  <Target Name="CopyFilesToOutputDirectory" />
 </Project>

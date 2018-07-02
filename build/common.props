@@ -5,7 +5,7 @@
     <RepositoryUrl>https://github.com/aspnet/Universe</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <GenerateUserSecretsAttribute>false</GenerateUserSecretsAttribute>
-    <AssemblyOriginatorKeyFile>..\..\build\Key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Key.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
